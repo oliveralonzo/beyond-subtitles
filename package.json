@@ -21,6 +21,7 @@
     "@babel/preset-typescript": "^7.13.0",
     "@parcel/babel-preset-env": "^2.0.0-alpha.3",
     "@parcel/transformer-html": "^2.0.0-alpha.3",
+    "@parcel/transformer-sass": "^2.0.0-nightly.771",
     "@parcel/transformer-svg-react": "^2.0.0-nightly.1739",
     "@types/node": "^14.14.21",
     "@types/parcel-env": "^0.0.0",
@@ -44,6 +45,7 @@
   "dependencies": {
     "mobx": "^6.3.1",
     "mobx-react-lite": "^3.2.0",
+    "node-sass": "^6.0.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
