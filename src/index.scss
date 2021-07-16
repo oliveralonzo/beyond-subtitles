@@ -1,0 +1,42 @@
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.wrapper {
+  width: 90%;
+  margin: auto;
+}
+
+.two-thirds {
+  width: 66%;
+}
+
+.one-third {
+  width: 33%;
+}
+
+.full-parent-width {
+  width: 100%;
+}
+
+#video-player, #search-box {
+  height: 50vh;
+}
+
+#video-player {
+ background-color: #e078d0;
+}
+
+#search-box {
+  background-color: #e8b782;
+}
+
+#sound-events {
+  background-color: #5874cd;
+  height: 100vh;
+}
