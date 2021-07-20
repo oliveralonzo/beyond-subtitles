@@ -1,31 +1,9 @@
-.flex {
-  display: flex;
-}
+@import "bootstrap/scss/bootstrap";
 
-.flex-column {
-  display: flex;
-  flex-direction: column;
-}
-
-.wrapper {
-  width: 90%;
-  margin: auto;
-}
-
-.two-thirds {
-  width: 66%;
-}
-
-.one-third {
-  width: 33%;
-}
-
-.full-parent-width {
-  width: 100%;
-}
 
 #video-player, #search-box {
   height: 50vh;
+  overflow-y: auto;
 }
 
 #video-player {
@@ -33,10 +11,43 @@
 }
 
 #search-box {
-  background-color: #e8b782;
+  // background-color: #e8b782;
 }
 
 #sound-events {
   background-color: #5874cd;
   height: 100vh;
+}
+
+.result-list {
+  padding-top: 1em;
+  column-count: 4;
+}
+
+.result {
+  margin-bottom: 1rem;
+  display: flex;
+}
+
+.card--image {
+  flex: 100%;
+  margin-top: 1rem;
+  border-radius: 10px;
+}
+
+@media (min-width: 768px) {
+  .form {
+    grid-template-columns: auto 1fr auto;
+    grid-gap: 1rem;
+    align-items: center;
+  }
+  .input {
+    margin-bottom: 0;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+    .card-list {
+        column-count: 1;
+    }
 }
