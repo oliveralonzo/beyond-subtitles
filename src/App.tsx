@@ -1,41 +1,31 @@
 // == External
 import React, { FC, Component } from 'react'
-import { Container, Row, Col, Tabs, Tab, InputGroup, FormControl, Button} from 'react-bootstrap'
+import { Container, Row, Col, Tabs, Tab, InputGroup, FormControl, Button, Accordion, Card} from 'react-bootstrap'
 
 // == App
 import { Counter } from './Counter'
-import { SearchBox } from './SearchBox'
-
+import { SearchBoxes } from './SearchBoxes'
+import { SoundEvents } from './SoundEvents'
+import { VideoPlayer } from './VideoPlayer'
 
 export const App:FC = () => {
 
   return <Container fluid>
-    {/*<Row>
-      <Col>
-        <h1>hello world</h1>
-        <Counter />
-      </Col>
-    </Row>*/}
     <Row>
-      <Col>
-        <Row id="video-player">
-        Video Player
-        </Row>
-        <Row id="search-box">
-          <Container>
-            <Tabs defaultActiveKey="gifs" id="uncontrolled-tab-example" className="mb-3">
-              <Tab eventKey="gifs" title="GIFs">
-                <SearchBox/>
-              </Tab>
-              <Tab eventKey="emojis" title="Emojis">
-
-              </Tab>
-            </Tabs>
-          </Container>
-        </Row>
+      <Col id="video-player" className="flex flex-centered flex-column">
+          <VideoPlayer/>
       </Col>
       <Col id="sound-events">
-      Sound Events
+        <Container>
+        <Tabs defaultActiveKey="sound-events" className="mb-3">
+          <Tab eventKey="full-transcript" title="Full Transcript" disabled>
+
+          </Tab>
+          <Tab eventKey="sound-events" title="Sound Events">
+            <SoundEvents />
+          </Tab>
+        </Tabs>
+        </Container>
       </Col>
     </Row>
   </Container>

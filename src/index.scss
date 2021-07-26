@@ -1,53 +1,95 @@
 @import "bootstrap/scss/bootstrap";
 
-
-#video-player, #search-box {
-  height: 50vh;
-  overflow-y: auto;
-}
-
-#video-player {
- background-color: #e078d0;
-}
-
-#search-box {
-  // background-color: #e8b782;
-}
-
-#sound-events {
-  background-color: #5874cd;
+#video-player, #sound-events {
   height: 100vh;
+  overflow-y: auto;
+  padding: 1rem;
 }
 
-.result-list {
-  padding-top: 1em;
-  column-count: 4;
+
+.search-box {
+  @media (min-width: 576px) {
+      .modal-dialog {
+      max-width: 50%;
+    }
+  }
+
+  .modal-body {
+    max-height: 75vh;
+    overflow-y: auto;
+  }
 }
 
-.result {
-  margin-bottom: 1rem;
+.flex {
   display: flex;
 }
 
-.card--image {
-  flex: 100%;
-  margin-top: 1rem;
-  border-radius: 10px;
+.flex-column {
+  flex-direction: column;
 }
 
-@media (min-width: 768px) {
-  .form {
-    grid-template-columns: auto 1fr auto;
-    grid-gap: 1rem;
-    align-items: center;
-  }
-  .input {
-    margin-bottom: 0;
+.flex-centered {
+  justify-content: center;
+  align-items: center;
+}
+
+.result-list {
+  max-width: 100%;
+  padding-top: 1em;
+}
+
+.no-border {
+  border: 0;
+  padding: 0;
+
+  &:focus {
+    box-shadow: none !important;
   }
 }
 
-@media only screen and (max-width: 600px) {
-    .card-list {
-        column-count: 1;
-    }
+.clickable {
+  :hover {
+    cursor: pointer;
+  }
+}
+
+.star {
+  font-size: 1.25em;
+
+  &:hover {
+    opacity: 0.5;
+  }
+
+  &.filled {
+    color: #ffe749;
+  }
+}
+
+.timestamp {
+  padding: 0;
+  justify-content: flex-start;
+
+  input {
+    width: 4.5rem;
+  }
+
+  span {
+    padding-right: .25rem;
+  }
+}
+
+.new-event {
+  margin-top: 1em;
+}
+
+.right-align {
+  text-align: right;
+}
+
+.card-toggle {
+  padding: 0 !important;
+}
+
+.sound-event {
+  margin-top: 1em;
 }

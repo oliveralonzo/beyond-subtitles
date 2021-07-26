@@ -21,6 +21,7 @@
     "@babel/preset-typescript": "^7.13.0",
     "@parcel/babel-preset-env": "^2.0.0-alpha.3",
     "@parcel/transformer-html": "^2.0.0-alpha.3",
+    "@parcel/transformer-image": "^2.0.0-nightly.2393",
     "@parcel/transformer-sass": "^2.0.0-nightly.771",
     "@parcel/transformer-svg-react": "^2.0.0-nightly.1739",
     "@types/node": "^14.14.21",
@@ -45,15 +46,23 @@
   "dependencies": {
     "@giphy/js-fetch-api": "^4.0.3",
     "@giphy/react-components": "^3.2.3",
+    "@material-ui/core": "^4.12.2",
     "axios": "^0.21.1",
     "bootstrap": "^5.0.2",
     "mobx": "^6.3.1",
     "mobx-react-lite": "^3.2.0",
     "node-sass": "^6.0.1",
     "react": "^17.0.1",
-    "react-bootstrap": "^1.6.1",
+    "react-bootstrap": "^2.0.0-beta.4",
     "react-dom": "^17.0.1",
-    "react-giphy-searchbox": "^1.5.4"
+    "react-giphy-searchbox": "^1.5.4",
+    "react-grid-gallery": "^0.5.5",
+    "react-masonry-css": "^1.0.16",
+    "react-native-video": "^5.1.1",
+    "react-player": "^2.9.0",
+    "react-stars": "^2.2.5",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^2.0.3"
   },
   "browserslist": [
     "since 2017-06"
