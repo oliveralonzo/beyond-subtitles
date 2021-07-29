@@ -1,11 +1,12 @@
 import React, { FC, useState } from 'react'
-import { Container, Row, Col, InputGroup, Form, FormCheck, FormControl, Button, Accordion, Card, ToggleButton, Modal, CloseButton } from 'react-bootstrap'
+import { Container, Row, Col, InputGroup, Form, FormCheck, FormControl, Button, Accordion, Card, ToggleButton, CloseButton } from 'react-bootstrap'
 import { useAccordionButton } from 'react-bootstrap/AccordionButton';
 import Stars from 'react-stars'
 import axios from 'axios'
 import parseMS from 'parse-ms'
 import toMS from '@sindresorhus/to-milliseconds'
 import { sounds } from "./Dummy"
+import Gallery from 'react-grid-gallery'
 
 import { SearchBox } from './SearchBox'
 
@@ -15,9 +16,60 @@ const SoundEvent:FC = (props) => {
   const [searchBoxShow, setSearchBoxShow] = useState(false)
   const [startTime, setStartTime] = useState(props.startTime)
   const [endTime, setEndTime] = useState(props.endTime)
+  const [visuals, setVisuals] = useState([])
+  const [descriptionEntered, setDescriptionEntered] = useState(false)
 
-  const handleClose = () => setSearchBoxShow(false)
-  const handleShow = () => setSearchBoxShow(true)
+  const updateVisuals = (newVisuals) => {
+    // figure out how to prevent duplicates
+    newVisuals = visuals.concat(newVisuals).map((visual) => {
+      visual.isSelected = false
+      return visual
+    })
+    setVisuals(newVisuals)
+    closeSearchBox()
+  }
+
+  const openSearchBox = () => setSearchBoxShow(true)
+  const closeSearchBox = () => setSearchBoxShow(false)
+
+  const handleTimeChange = (type, time) => {
+    if (type == "startTime")
+      setStartTime(time)
+    else if (type == "endTime")
+      setEndTime(time)
+    props.onTimeStampChange(type, time, props.index)
+  }
+
+  const convertTime = (time) => {
+    time = time.split(":").map((t) => {return parseInt(t)})
+    const time_object = {
+      hours: time[0],
+      minutes: time[1],
+      seconds: time[2]
+    }
+
+    console.log(time_object)
+    return toMS(time_object)
+  }
+
+  const formatMS = (milliseconds) => {
+    if (milliseconds != null) {
+      const time = parseMS(milliseconds)
+      var hours = time.hours
+      var minutes = time.minutes
+      var seconds = time.seconds
+
+      hours = (hours < 10) ? "0" + hours : hours
+      minutes = (minutes < 10) ? "0" + minutes : minutes
+      seconds = (seconds < 10) ? "0" + seconds : seconds
+
+      const formattedTime = hours + ":" + minutes + ":" + seconds
+
+      return formattedTime
+    } else {
+      return null
+    }
+  }
 
   const CustomToggle = ({ children, eventKey }) => {
     const decoratedOnClick = useAccordionButton(eventKey, () =>
@@ -36,9 +88,21 @@ const SoundEvent:FC = (props) => {
       <Form.Control
         type="text"
         maxLength="8"
-        onInput={(e) => {e.currentTarget.value = e.currentTarget.value.replace(/[^0-9:]/g, '').replace(/((:|^).?):/g, '$1').replace(/([0-9][0-9])[0-9]/g, '$1')}}
+        autoComplete="off"
+        onInput={(e) => {
+          // This needs to be cleaned up to make sure that it is usable (e.g. right now replacing something in the middle removes the rest)
+          e.currentTarget.value = e.currentTarget.value.replace(/[^0-9:]/g, '').replace(/((:|^).?):/g, '$1]').replace(/([0-9][0-9])[0-9]/g, '$1')}}
         placeholder="00:00:00"
-        value={props.time}
+        name={props.name}
+        defaultValue={formatMS(props.time)}
+        onChange={(e) => {
+          // This needs to be cleaned up to make sure that the time is always in the right format
+          const curr = e.currentTarget
+          const time = curr.value
+          if (time.length == 8) {
+            handleTimeChange(curr.name, convertTime(time))
+          }
+        }}
         className="no-border"/>
     )
   }
@@ -51,114 +115,124 @@ const SoundEvent:FC = (props) => {
     }
   }
 
-  return (
-    <>
-      <Accordion className="sound-event">
-        <Card>
-          <Card.Body>
-            <Container className="sound-event-card">
-              <Row>
-                <Col>
-                  <Card.Title>
-                    <Container className="timestamp flex">
-                      <TimeStamp time={startTime}/>
-                      <span> – </span>
-                      <TimeStamp time={endTime}/>
-                    </Container>
-                  </Card.Title>
-                </Col>
-                <Col className="right-align">
-                  <Container className="no-border clickable" onClick={(e) => setImportant(!important)}> <Star filled={important}> </Star> </Container>
-                  {/*<ToggleButton
-                    className="mb-2"
-                    id="toggle-check"
-                    type="checkbox"
-                    variant="outline-primary"
-                    checked={important}
-                    value="1"
-                    onChange={(e) => setImportant(e.currentTarget.checked)}
-                  >
-                    Important
-                  </ToggleButton>/*}
-                  {/*<Form.Check
-                    checked={important}
-                    onChange={(e) => setImportant(e.currentTarget.checked)}
-                    type="switch"
-                    id="custom-switch"/>*/}
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Form.Control
-                    type="text"
-                    placeholder="Sound Label…"
-                    className="no-border"
-                    value={props.label}
-                  />
-                </Col>
-                <Col className="right-align">
-                  {/*}<CustomToggle eventKey="0"> Visuals </CustomToggle> */}
-                  <Button variant="link" onClick={handleShow}> Add visuals </Button>
-                </Col>
-              </Row>
-            </Container>
-          </Card.Body>
-          <Accordion.Collapse eventKey="0">
-            <Container>
-              <Card.Body>More settings for each sound event will be here </Card.Body>
-            </Container>
-          </Accordion.Collapse>
-        </Card>
-      </Accordion>
-      <Modal className="search-box" show={searchBoxShow} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Search Giphy</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <SearchBoxes/>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
-  )
+  if (enabled) {
+    return (
+        <>
+        <Accordion onClick={() => props.onClick(startTime)} className="sound-event">
+          <Card>
+            <Card.Body>
+              <Container className="sound-event-card">
+                <CloseButton className="dismiss-sound-btn" onClick={(e) => setEnabled(false)}/>
+                <Row>
+                  <Col>
+                    <Card.Title>
+                      <Container className="timestamp flex">
+                        <TimeStamp time={startTime} name="startTime"/>
+                        <span> – </span>
+                        <TimeStamp time={endTime} name="endTime"/>
+                      </Container>
+                    </Card.Title>
+                  </Col>
+                  <Col className="right-align">
+                    <Container className="no-border clickable" onClick={(e) => setImportant(!important)}> <Star filled={important}> </Star> </Container>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Form.Control
+                      type="text"
+                      placeholder={props.inputPlaceholder}
+                      className="no-border"
+                      defaultValue={props.label}
+                      onChange={()=>{setDescriptionEntered(true)}}
+                    />
+                    <Form.Text className="text-muted">
+                      {props.automaticTags && <>Automatic labels: {props.automaticTags}</>}
+                      {!descriptionEntered && props.automatic && !props.automaticTags && <>Automatic suggestion, consider making the label more descriptive </>}
+                    </Form.Text>
+                  </Col>
+                </Row>
+                <Row className="sound-event-visuals flex">
+                  <Gallery rowHeight={50} images={visuals} margin={5} enableImageSelection={false}/>
+                  {props.visuals && <Button variant="link" onClick={openSearchBox}> Add visuals </Button>}
+                </Row>
+              </Container>
+            </Card.Body>
+            <Accordion.Collapse eventKey="0">
+              <Container>
+                <Card.Body>More information about each sound event will be here </Card.Body>
+              </Container>
+            </Accordion.Collapse>
+          </Card>
+        </Accordion>
+        {searchBoxShow && <SearchBox open={searchBoxShow} close={closeSearchBox} updateVisuals={updateVisuals}/>}
+        </>
+      )
+  } else {
+    return null
+  }
 }
 
-export const SoundEvents:FC = () => {
+export const SoundEvents:FC = (props) => {
   const [events, setEvents] = useState([])
+  const [analyzed, setAnalyzed] = useState(false)
 
-  const appendEvent = () => {
-    setEvents(() => {
-      key = events.length
-      return [...events, <SoundEvent key={key}/>]
+  const appendEvents = (to_append, type) => {
+    const curr_events_length = events.length
+    to_append = to_append.map((event, index) => {
+      event.key = events.length + index
+      return event
+    })
+    setEvents(sortEvents(events.concat(to_append)))
+  }
+
+  const sortEvents = (toSort) => {
+    return toSort.sort((a,b) => {
+      if (a.startTime != null && b.startTime != null) {
+        if (a.startTime == b.startTime)
+          return a.endTime - b.endTime
+        return a.startTime - b.startTime
+      }
+      else if (a.startTime)
+        return -1
+      else
+        return 1
     })
   }
 
-  const loadJSON = async () => {
-    const response = await axios.get("http://localhost:3000/sounds")
-    setEvents(() => {
-      return response.data.map((event, index) => {
-        return <SoundEvent startTime={event.startTime} endTime={event.endTime} label={event.label} key={index}/>
-      })
-    })
+  const appendEmptyEvent = () => {
+    appendEvents([{
+      "startTime": props.videoPlayer.getCurrentTime()*1000,
+      "endTime": null,
+      "label": "",
+      "automatic": false
+    }])
+  }
+
+  const loadEvents = () => {
+    appendEvents(sounds[props.source])
+    setAnalyzed(true)
+  }
+
+  const handleChange = (property, value, index) => {
+    events[index][property] = value
+    setEvents(sortEvents([...events]))
+  }
+
+  const seekVideo = (time) => {
+    console.log(time)
+    props.videoPlayer.seekTo(time/1000)
   }
 
   return (
     <>
-      {events}
-      <Container>
-        <Row>
-          <Button variant="primary" className="new-event" onClick={appendEvent}> New Event </Button>
-        </Row>
-        <Row>
-          <Button variant="primary" className="new-event" onClick={loadJSON}> Analyze Video </Button>
-        </Row>
+      {events.map((event, index) => {
+        return <SoundEvent onClick={seekVideo} onTimeStampChange={handleChange} startTime={event.startTime} endTime={event.endTime} label={event.label} index={index} key={event.key} automatic={event.automatic} automaticTags={event.tags} inputPlaceholder={props.inputPlaceholder} visuals={props.visuals}/>
+      })}
+      <Container className="event-buttons flex">
+          <Button variant="primary" onClick={loadEvents} disabled={analyzed}> Auto-search Events </Button>
+          <Button variant="primary" onClick={appendEmptyEvent}> Add New Event </Button>
+          <Button variant="primary"> Export </Button>
       </Container>
     </>
   )
