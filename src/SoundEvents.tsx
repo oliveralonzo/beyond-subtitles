@@ -1,12 +1,16 @@
 import React, { FC, useState } from 'react'
-import { Container, Row, Col, InputGroup, Form, FormCheck, FormControl, Button, Accordion, Card, ToggleButton, Modal } from 'react-bootstrap'
+import { Container, Row, Col, InputGroup, Form, FormCheck, FormControl, Button, Accordion, Card, ToggleButton, Modal, CloseButton } from 'react-bootstrap'
 import { useAccordionButton } from 'react-bootstrap/AccordionButton';
 import Stars from 'react-stars'
 import axios from 'axios'
+import parseMS from 'parse-ms'
+import toMS from '@sindresorhus/to-milliseconds'
+import { sounds } from "./Dummy"
 
-import { SearchBoxes } from './SearchBoxes'
+import { SearchBox } from './SearchBox'
 
 const SoundEvent:FC = (props) => {
+  const [enabled, setEnabled] = useState(true)
   const [important, setImportant] = useState(false)
   const [searchBoxShow, setSearchBoxShow] = useState(false)
   const [startTime, setStartTime] = useState(props.startTime)
