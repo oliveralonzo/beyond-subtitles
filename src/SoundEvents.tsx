@@ -153,7 +153,7 @@ const SoundEvent:FC = (props) => {
                   </Col>
                 </Row>
                 <Row className="sound-event-visuals flex">
-                  <Gallery rowHeight={50} images={visuals} margin={5} enableImageSelection={false}/>
+                  {visuals.length > 0 && <Gallery rowHeight={50} images={visuals} margin={5} enableImageSelection={false}/>}
                   {props.visuals && <Button variant="link" onClick={openSearchBox}> Add visuals </Button>}
                 </Row>
               </Container>
