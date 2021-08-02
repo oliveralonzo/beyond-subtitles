@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { Container, Row, Col, InputGroup, Form, FormCheck, FormControl, Button, Accordion, Card, ToggleButton, CloseButton } from 'react-bootstrap'
 import { useAccordionButton } from 'react-bootstrap/AccordionButton';
 import Stars from 'react-stars'
@@ -220,19 +220,24 @@ export const SoundEvents:FC = (props) => {
   }
 
   const seekVideo = (time) => {
-    console.log(time)
     props.videoPlayer.seekTo(time/1000)
   }
+
+  useEffect(() => {
+    console.log(props.videoLoaded)
+    setAnalyzed(false)
+    setEvents([])
+  }, [props.videoLoaded])
 
   return (
     <>
       {events.map((event, index) => {
-        return <SoundEvent onClick={seekVideo} onTimeStampChange={handleChange} startTime={event.startTime} endTime={event.endTime} label={event.label} index={index} key={event.key} automatic={event.automatic} automaticTags={event.tags} inputPlaceholder={props.inputPlaceholder} visuals={props.visuals}/>
+        return <SoundEvent onClick={seekVideo} important={event.important} onValueChange={handleChange} startTime={event.startTime} endTime={event.endTime} label={event.label} index={index} key={event.key} automatic={event.automatic} automaticTags={event.tags} inputPlaceholder={props.inputPlaceholder} visuals={props.visuals}/>
       })}
       <Container className="event-buttons flex">
-          <Button variant="primary" onClick={loadEvents} disabled={analyzed}> Auto-search Events </Button>
-          <Button variant="primary" onClick={appendEmptyEvent}> Add New Event </Button>
-          <Button variant="primary"> Export </Button>
+          <Button variant="primary" onClick={loadEvents} disabled={analyzed || !props.videoLoaded}> Auto-search Events </Button>
+          <Button variant="primary" onClick={appendEmptyEvent} disabled={!props.videoLoaded}> Add New Event </Button>
+          <Button variant="primary" disabled={!props.videoLoaded || events.length == 0}> Export </Button>
       </Container>
     </>
   )

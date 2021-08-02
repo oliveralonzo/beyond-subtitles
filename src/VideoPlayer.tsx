@@ -6,7 +6,9 @@ export const VideoPlayer:FC = (props) => {
   const [videoFilePath, setVideoFilePath] = useState(null)
 
   const handleVideoUpload = (event) => {
-    setVideoFilePath(URL.createObjectURL(event.target.files[0]))
+    const path = URL.createObjectURL(event.target.files[0])
+    setVideoFilePath(path)
+    props.onVideoLoad(event.target.files[0].name)
   }
 
   return (

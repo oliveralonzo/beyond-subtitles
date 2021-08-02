@@ -10,15 +10,18 @@ import { VideoPlayer } from './VideoPlayer'
 
 export const App:FC = () => {
   const [videoPlayer, setVideoPlayer] = useState(null)
+  const [videoLoaded, setVideoLoaded] = useState(null)
 
   const ref = (player) => {
     setVideoPlayer(player)
   }
 
+  const handleVideoLoad = (loaded) => setVideoLoaded(loaded)
+
   return <Container fluid>
     <Row>
       <Col id="video-player" className="flex flex-centered flex-column">
-          <VideoPlayer player={ref}/>
+          <VideoPlayer player={ref} onVideoLoad={handleVideoLoad}/>
       </Col>
       <Col id="sound-events">
         <Container>
@@ -27,7 +30,7 @@ export const App:FC = () => {
 
           </Tab>
           <Tab eventKey="sound-events" title="Sound Events">
-            <SoundEvents videoPlayer={videoPlayer} source="dog" visuals={true} inputPlaceholder="Describe sound…"/>
+            <SoundEvents videoPlayer={videoPlayer} videoLoaded={videoLoaded} source="dog" visuals={true} inputPlaceholder="Describe sound…"/>
           </Tab>
         </Tabs>
         </Container>
