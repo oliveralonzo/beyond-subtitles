@@ -23,8 +23,8 @@ export const App:FC = () => {
       <Col id="sound-events">
         <Container>
         <Tabs defaultActiveKey="sound-events" className="mb-3">
-          <Tab eventKey="visual-events" title="Visual Events">
-            <SoundEvents videoPlayer={videoPlayer} source="yapeng" visuals={false} inputPlaceholder="Describe visual scene…"/>
+          <Tab eventKey="visual-events" title="Full Transcript" disabled>
+
           </Tab>
           <Tab eventKey="sound-events" title="Sound Events">
             <SoundEvents videoPlayer={videoPlayer} source="dog" visuals={true} inputPlaceholder="Describe sound…"/>
