@@ -47,7 +47,7 @@ export const SearchBox:FC = (props) => {
 
   const searchGiphy = (index) => {
     const tab = tabs[index]
-    const doSearch = () => gf.search(tab.query, { sort: 'relevant', lang: 'es', limit: 30, type: tab.type }).then(data => data.data)
+    const doSearch = () => gf.search(tab.query, { sort: 'relevant', lang: 'es', limit: 100, type: tab.type }).then(data => data.data)
 
     doSearch().then(
       data => {
