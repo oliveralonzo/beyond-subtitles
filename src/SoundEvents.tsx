@@ -26,6 +26,7 @@ const SoundEvent:FC = (props) => {
       return visual
     })
     setVisuals(newVisuals)
+    props.onValueChange("visuals", newVisuals, props.index)
     closeSearchBox()
   }
 
@@ -37,7 +38,7 @@ const SoundEvent:FC = (props) => {
       setStartTime(time)
     else if (type == "endTime")
       setEndTime(time)
-    props.onTimeStampChange(type, time, props.index)
+    props.onValueChange(type, time, props.index)
   }
 
   const convertTime = (time) => {
@@ -109,9 +110,9 @@ const SoundEvent:FC = (props) => {
 
   const Star = (props) => {
     if (props.filled) {
-      return <span className="star filled"> ★ </span>
+      return <span className="star filled" onClick={props.onClick}> ★ </span>
     } else {
-      return <span className="star"> ☆ </span>
+      return <span className="star" onClick={props.onClick}> ☆ </span>
     }
   }
 
@@ -134,7 +135,14 @@ const SoundEvent:FC = (props) => {
                     </Card.Title>
                   </Col>
                   <Col className="right-align">
-                    <Container className="no-border clickable" onClick={(e) => setImportant(!important)}> <Star filled={important}> </Star> </Container>
+                    <Container className="no-border clickable">
+                      <Star
+                        filled={props.important}
+                        onClick={(e) => {
+                          props.onValueChange("important", !props.important, props.index)
+                        }}
+                      />
+                    </Container>
                   </Col>
                 </Row>
                 <Row>
@@ -144,7 +152,12 @@ const SoundEvent:FC = (props) => {
                       placeholder={props.inputPlaceholder}
                       className="no-border"
                       defaultValue={props.label}
-                      onChange={()=>{setDescriptionEntered(true)}}
+                      name="label"
+                      onChange={(e)=>{
+                        const curr = e.currentTarget
+                        setDescriptionEntered(true)
+                        props.onValueChange(curr.name, curr.value, props.index)
+                      }}
                     />
                     <Form.Text className="text-muted">
                       {props.automaticTags && <>Automatic labels: {props.automaticTags}</>}
@@ -180,6 +193,7 @@ export const SoundEvents:FC = (props) => {
   const appendEvents = (to_append, type) => {
     const curr_events_length = events.length
     to_append = to_append.map((event, index) => {
+      event.important = false
       event.key = events.length + index
       return event
     })
