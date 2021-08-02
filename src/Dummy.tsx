@@ -41,7 +41,7 @@ export const sounds = {
     {
       "startTime": 17000,
       "endTime": 18000,
-      "label": "Machine rumble",
+      "label": "Dog growls",
       "automatic": true
     },
   ],
