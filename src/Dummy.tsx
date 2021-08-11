@@ -1,5 +1,5 @@
 export const sounds = {
-  "bbc": [
+  "BBC": [
     {
       "startTime": 0,
       "endTime": 6000,
@@ -13,7 +13,7 @@ export const sounds = {
       "automatic": true
     }
   ],
-  "dog": [
+  "Dog": [
     {
       "startTime": 7000,
       "endTime": 9000,
@@ -21,8 +21,8 @@ export const sounds = {
       "automatic": true
     },
     {
-      "startTime": 8000,
-      "endTime": 10000,
+      "startTime": 10000,
+      "endTime": 11000,
       "label": "Door knock",
       "automatic": true
     },
@@ -37,13 +37,7 @@ export const sounds = {
       "endTime": 14000,
       "label": "Glass shattering",
       "automatic": true
-    },
-    {
-      "startTime": 17000,
-      "endTime": 18000,
-      "label": "Dog growls",
-      "automatic": true
-    },
+    }
   ],
   "yapeng": [
     {
@@ -66,6 +60,76 @@ export const sounds = {
       "endTime": 23000,
       "tags": "girl, computer, texts",
       "automatic": true
+    }
+  ],
+  "YouTube": [
+    {
+      "startTime": 0,
+      "endTime": 2000,
+      "label": "Baby crying",
+      "automatic": true,
+    },
+    {
+      "startTime": 4000,
+      "endTime": 7000,
+      "label": "Baby crying",
+      "automatic": true,
+    },
+    {
+      "startTime": 6000,
+      "endTime": 9000,
+      "label": "Laughter",
+      "automatic": true,
+    },
+    {
+      "startTime": 9000,
+      "endTime": 19000,
+      "label": "Applause",
+      "automatic": true,
+    },
+    {
+      "startTime": 21000,
+      "endTime": 24000,
+      "label": "Laughter",
+      "automatic": true,
+    }
+  ],
+  "TikTok": [
+    {
+      "startTime": 0,
+      "endTime": 1000,
+      "label": "Beep",
+      "automatic": true,
+    },
+    {
+      "startTime": 2000,
+      "endTime": 4000,
+      "label": "Beep, bleep",
+      "automatic": true,
+    },
+    {
+      "startTime": 4000,
+      "endTime": 5000,
+      "label": "Beep",
+      "automatic": true,
+    },
+    {
+      "startTime": 5000,
+      "endTime": 6000,
+      "label": "Beep",
+      "automatic": true,
+    },
+    {
+      "startTime": 6000,
+      "endTime": 7000,
+      "label": "Beep",
+      "automatic": true,
+    },
+    {
+      "startTime": 7000,
+      "endTime": 10000,
+      "label": "Squeak",
+      "automatic": true,
     }
   ]
 }

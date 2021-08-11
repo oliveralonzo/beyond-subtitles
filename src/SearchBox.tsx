@@ -56,12 +56,16 @@ export const SearchBox:FC = (props) => {
            src: result.images.original.url,
            thumbnail: result.images.original.url,
            thumbnailWidth: result.images.original.width,
-           thumbnailHeight: result.images.original.height
+           thumbnailHeight: result.images.original.height,
+           original_still: result.images.original_still.url
           }
         })
-       tab.results = results
-       tab.searched = true
-       setTabs([...tabs])
+        if (results.length > 0)
+          tab.results = results
+        else
+          tab.results = null
+        tab.searched = true
+        setTabs([...tabs])
       }
     )
   }
@@ -138,7 +142,9 @@ export const SearchBox:FC = (props) => {
               {tabs.map((tab, index) => (
                 <Tab.Pane key={index} eventKey={index}>
                   <Container className="result-list">
-                    <Gallery onSelectImage={onSelectImage} images={tab.results} margin={5} enableImageSelection={true}/>
+                    {tab.results != null
+                      ? <Gallery onSelectImage={onSelectImage} images={tab.results} margin={5} enableImageSelection={true}/>
+                      : "Your search returned 0 results."}
                   </Container>
                 </Tab.Pane>
               ))}

@@ -1,4 +1,5 @@
 @import "bootstrap/scss/bootstrap";
+@import "react-rotatable/dist/css/rotatable.min";
 
 #video-player, #sound-events {
   height: 100vh;
@@ -6,6 +7,9 @@
   padding: 1rem;
 }
 
+#video-player > div {
+  margin-top: 1rem;
+}
 
 .search-box {
   @media (min-width: 576px) {
@@ -65,7 +69,7 @@
   }
 }
 
-.timestamp {
+.timestamps {
   padding: 0;
   justify-content: flex-start;
 
@@ -91,7 +95,7 @@
   padding: 1rem;
 
   button {
-    margin-right: 1rem; 
+    margin-right: 1rem;
   }
 }
 
@@ -102,6 +106,11 @@
   &:hover {
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     cursor: pointer;
+  }
+
+  &.current .card{
+    box-shadow: 0 3px 10px rgba(#3dff73, 0.27);
+    border-color: #3dff73;
   }
 
   .sound-event-card {
@@ -119,4 +128,70 @@
       right: .25rem;
     }
   }
+}
+
+.visuals-remove {
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  opacity: 70%;
+  justify-content: center;
+  align-items: center;
+
+  .btn-close {
+    font-size: 1.5rem;
+  }
+}
+
+.video-wrapper {
+  position: relative;
+  max-height: 70vh;
+
+  .video-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+
+    .descriptions, .visuals {
+      position: absolute;
+      height: 90%;
+      left: 0;
+      right: 0;
+      justify-content: flex-end;
+      align-items: center;
+
+      .description, .visual-wrapper {
+        z-index: 99;
+      }
+
+      .description {
+        color: #ffffff;
+        background-color: rgba(0, 0, 0, 0.8);
+        padding: .1rem .5rem;
+        font-size: 1rem;
+        margin-bottom: .25rem;
+      }
+
+      .visual {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+
+    }
+  }
+}
+
+.draggable {
+  cursor: move;
+    border: 1px solid #000000;
+}
+
+.download-button {
+  color: #fff !important;
+  margin: 0 !important;
+  text-decoration: none !important;
 }

@@ -7,6 +7,7 @@ import parseMS from 'parse-ms'
 import toMS from '@sindresorhus/to-milliseconds'
 import { sounds } from "./Dummy"
 import Gallery from 'react-grid-gallery'
+import DownloadLink from "react-download-link"
 
 import { SearchBox } from './SearchBox'
 
@@ -23,6 +24,8 @@ const SoundEvent:FC = (props) => {
     // figure out how to prevent duplicates
     newVisuals = visuals.concat(newVisuals).map((visual) => {
       visual.isSelected = false
+      visual.customOverlay = <RemoveVisualOverlay/>
+      // visual.thumbnail = visual.original_still
       return visual
     })
     setVisuals(newVisuals)
@@ -48,8 +51,6 @@ const SoundEvent:FC = (props) => {
       minutes: time[1],
       seconds: time[2]
     }
-
-    console.log(time_object)
     return toMS(time_object)
   }
 
@@ -72,16 +73,15 @@ const SoundEvent:FC = (props) => {
     }
   }
 
-  const CustomToggle = ({ children, eventKey }) => {
-    const decoratedOnClick = useAccordionButton(eventKey, () =>
-      console.log('totally custom!'),
-    );
+  const removeVisual = (index) => {
+    visuals.splice(index, 1)
+    props.onValueChange("visuals", visuals, props.index)
+    setVisuals([...visuals])
+  }
 
-    return (
-      <Button className="card-toggle" onClick={decoratedOnClick} variant="link">
-        {children}
-      </Button>
-    );
+  const disableEvent = () => {
+    setEnabled(false)
+    props.onValueChange("disabled", true, props.index)
   }
 
   const TimeStamp = (props) => {
@@ -104,7 +104,9 @@ const SoundEvent:FC = (props) => {
             handleTimeChange(curr.name, convertTime(time))
           }
         }}
-        className="no-border"/>
+        onClick={(e)=>{e.stopPropagation()}}
+        className="no-border"
+        />
     )
   }
 
@@ -116,18 +118,26 @@ const SoundEvent:FC = (props) => {
     }
   }
 
+  const RemoveVisualOverlay = () => {
+    return <>
+    <div className="visuals-remove flex">
+      <CloseButton variant="white"/>
+    </div>
+    </>
+  }
+
   if (enabled) {
     return (
         <>
-        <Accordion onClick={() => props.onClick(startTime)} className="sound-event">
+        <Accordion onClick={() => props.onClick(startTime)} className={`sound-event ${props.current ? "current" : ""}`}>
           <Card>
             <Card.Body>
               <Container className="sound-event-card">
-                <CloseButton className="dismiss-sound-btn" onClick={(e) => setEnabled(false)}/>
+                <CloseButton className="dismiss-sound-btn" onClick={disableEvent}/>
                 <Row>
                   <Col>
                     <Card.Title>
-                      <Container className="timestamp flex">
+                      <Container className="timestamps flex">
                         <TimeStamp time={startTime} name="startTime"/>
                         <span> – </span>
                         <TimeStamp time={endTime} name="endTime"/>
@@ -152,6 +162,7 @@ const SoundEvent:FC = (props) => {
                       placeholder={props.inputPlaceholder}
                       className="no-border"
                       defaultValue={props.label}
+                      autoComplete="off"
                       name="label"
                       onChange={(e)=>{
                         const curr = e.currentTarget
@@ -166,16 +177,11 @@ const SoundEvent:FC = (props) => {
                   </Col>
                 </Row>
                 <Row className="sound-event-visuals flex">
-                  {visuals.length > 0 && <Gallery rowHeight={50} images={visuals} margin={5} enableImageSelection={false}/>}
+                  {visuals.length > 0 && <Gallery rowHeight={50} images={visuals} margin={5} backdropClosesModal={true} enableImageSelection={false} onClickThumbnail={removeVisual}/>}
                   {props.visuals && <Button variant="link" onClick={openSearchBox}> Add visuals </Button>}
                 </Row>
               </Container>
             </Card.Body>
-            <Accordion.Collapse eventKey="0">
-              <Container>
-                <Card.Body>More information about each sound event will be here </Card.Body>
-              </Container>
-            </Accordion.Collapse>
           </Card>
         </Accordion>
         {searchBoxShow && <SearchBox open={searchBoxShow} close={closeSearchBox} updateVisuals={updateVisuals}/>}
@@ -187,17 +193,16 @@ const SoundEvent:FC = (props) => {
 }
 
 export const SoundEvents:FC = (props) => {
-  const [events, setEvents] = useState([])
   const [analyzed, setAnalyzed] = useState(false)
 
   const appendEvents = (to_append, type) => {
-    const curr_events_length = events.length
+    const events = props.events
     to_append = to_append.map((event, index) => {
       event.important = false
       event.key = events.length + index
       return event
     })
-    setEvents(sortEvents(events.concat(to_append)))
+    props.onEventsChange(sortEvents(events.concat(to_append)))
   }
 
   const sortEvents = (toSort) => {
@@ -216,7 +221,7 @@ export const SoundEvents:FC = (props) => {
 
   const appendEmptyEvent = () => {
     appendEvents([{
-      "startTime": props.videoPlayer.getCurrentTime()*1000,
+      "startTime": Math.floor(props.currTime/1000)*1000,
       "endTime": null,
       "label": "",
       "automatic": false
@@ -224,34 +229,40 @@ export const SoundEvents:FC = (props) => {
   }
 
   const loadEvents = () => {
-    appendEvents(sounds[props.source])
     setAnalyzed(true)
+    appendEvents(sounds[props.videoLoaded])
   }
 
   const handleChange = (property, value, index) => {
+    const events = props.events
     events[index][property] = value
-    setEvents(sortEvents([...events]))
+    props.onEventsChange(sortEvents([...events]))
   }
 
-  const seekVideo = (time) => {
-    props.videoPlayer.seekTo(time/1000)
+  const exportEvents = () => {
+    const json = {"events": props.events}
+    return JSON.stringify(json)
   }
 
   useEffect(() => {
-    console.log(props.videoLoaded)
     setAnalyzed(false)
-    setEvents([])
+    props.onEventsChange([])
   }, [props.videoLoaded])
 
   return (
     <>
-      {events.map((event, index) => {
-        return <SoundEvent onClick={seekVideo} important={event.important} onValueChange={handleChange} startTime={event.startTime} endTime={event.endTime} label={event.label} index={index} key={event.key} automatic={event.automatic} automaticTags={event.tags} inputPlaceholder={props.inputPlaceholder} visuals={props.visuals}/>
+      {props.events.map((event, index) => {
+        return <SoundEvent current={event.current} onClick={props.seekVideo} important={event.important} onValueChange={handleChange} startTime={event.startTime} endTime={event.endTime} label={event.label} index={index} key={event.key} automatic={event.automatic} automaticTags={event.tags} inputPlaceholder={props.inputPlaceholder} visuals={props.visuals}/>
       })}
       <Container className="event-buttons flex">
           <Button variant="primary" onClick={loadEvents} disabled={analyzed || !props.videoLoaded}> Auto-search Events </Button>
           <Button variant="primary" onClick={appendEmptyEvent} disabled={!props.videoLoaded}> Add New Event </Button>
-          <Button variant="primary" disabled={!props.videoLoaded || events.length == 0}> Export </Button>
+          <DownloadLink
+            className={`btn btn-primary download-button ${!props.videoLoaded || props.events.length == 0 ? "disabled" : ""}`}
+            label="Export"
+            filename="Sound Events.json"
+            exportFile={exportEvents}
+          />
       </Container>
     </>
   )
