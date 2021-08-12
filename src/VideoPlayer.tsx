@@ -112,7 +112,7 @@ export const VideoPlayer:FC = (props) => {
                 })}
               </Container>}
           </Container>
-          {currVideo && <ReactPlayer ref={props.player} url={`/videos/${currVideo}.mp4`} controls={true} width="100%" height="100%" onProgress={props.onProgress} onPlay={onPlayPause} onPause={onPlayPause}  />}
+          {currVideo && <ReactPlayer ref={props.player} url={`static/videos/${currVideo}.mp4`} controls={true} width="100%" height="100%" onProgress={props.onProgress} onPlay={onPlayPause} onPause={onPlayPause}  />}
         </Container>
         {/*<Form.Group className="mb-3">
           <Form.Control type="file" onChange={handleVideoUpload}/>
