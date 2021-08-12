@@ -178,7 +178,7 @@
       .visual {
         width: 100%;
         height: 100%;
-        background-size: cover;
+        background-size: contain;
         background-repeat: no-repeat;
       }
 
@@ -192,7 +192,7 @@
 
 .draggable {
   cursor: move;
-    border: 1px solid #000000;
+  border: 1px solid #000000;
 }
 
 .download-button {

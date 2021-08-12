@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import { Container, Form, ButtonGroup, ToggleButton, DropdownButton, InputGroup, Dropdown, FormControl } from 'react-bootstrap'
 import ReactPlayer from 'react-player'
 import Draggable from 'react-draggable'
-import {Resizable} from 're-resizable'
+import {Resizable, HandleClassName} from 're-resizable'
 import {Rnd} from 'react-rnd'
 import {Rotatable} from 'react-rotatable'
 import Moveable from "react-moveable"
@@ -16,13 +16,18 @@ const Visual:FC = (props) => {
       else
         return {x:0, y:0}
   })
+
   const [rotation, setRotation] = useState(props.rotation)
+  const [disableDragging, setDisableDragging] = useState(false)
+
   const [width, setWidth] = useState(() => {
     if (props.width != null)
       return props.width
     else
       return defaultInitialWidth
   })
+
+  const [height, setHeight] = useState(0)
 
   const handleDrag = (e, ui) => {
     const newPosition = {x: ui.x, y: ui.y}
@@ -36,31 +41,41 @@ const Visual:FC = (props) => {
   }
 
   const handleResize = (e, direction, ref, d) => {
-    const newWidth = parseFloat(ref.style.width)
+    const newWidth = width*parseFloat(ref.style.width)/100
     setWidth(newWidth)
+    setHeight(ref.style.height)
+    setDisableDragging(false)
     props.onChange(position, rotation, newWidth, props.eventIndex, props.index)
+    console.log(d)
+  }
+
+  const handleResizeStart = (e, direction, ref) => {
+    setDisableDragging(true)
+    setHeight(ref.offsetHeight + "px")
+    ref.style.height = ref.offsetHeight + "px"
+    ref.style.paddingBottom = 0
   }
 
   return <>
-      <Draggable bounds="parent" onStop={handleDrag} defaultPosition={position}>
-        <Resizable defaultSize={{width: `${width}%`}}
-          className={`box visual-wrapper`}
-          style={{
-            height: `${(props.visual.thumbnailHeight / props.visual.thumbnailWidth) * props.width}%`
-          }}
-          lockAspectRatio={true}
-          onResizeStop={handleResize}
-        >
+      <Draggable cancel=".handles" bounds="parent" onStop={handleDrag} defaultPosition={position} disabled={disableDragging}>
+        <div className="box visual-wrapper flex flex-centered" style={{width: `${width}%`}}>
         <Rotatable canRotate={!props.videoPlaying} onRotateStop={handleRotation}>
-          <div className={`visual  ${props.videoPlaying ? "" : "draggable"}`} style={{
+          <Resizable size={{width: `100%`, height: height}} defaultSize={{height: height}}
+          handleClasses={{bottom: "handles", bottomLeft: "handles", bottomRight: "handles", left: "handles", right: "handles", top: "handles", topLeft: "handles", topRight: "handles"}}
+          className={`visual  ${props.videoPlaying ? "" : "draggable"}`} style={{
             backgroundImage: `url(${props.videoPlaying ? props.visual.src : props.visual.src})`,
             paddingBottom: `${(props.visual.thumbnailHeight / props.visual.thumbnailWidth) * 100}%`,
             transform: `rotate(${rotation})`
-          }}>
-          </div>
+          }}
+            lockAspectRatio={true}
+            onResizeStop={handleResize}
+            onResizeStart={handleResizeStart}
+          >
+          </Resizable>
         </Rotatable>
-        </Resizable>
+        </div>
       </Draggable>
+
   </>
 }
 
