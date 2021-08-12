@@ -198,6 +198,8 @@ export const SoundEvents:FC = (props) => {
   const appendEvents = (to_append, type) => {
     const events = props.events
     to_append = to_append.map((event, index) => {
+      event.startTime = Math.floor(event.startTime/1000)*1000
+      event.endTime = Math.ceil(event.endTime/1000)*1000
       event.important = false
       event.key = events.length + index
       return event
@@ -230,7 +232,7 @@ export const SoundEvents:FC = (props) => {
 
   const loadEvents = () => {
     setAnalyzed(true)
-    appendEvents(sounds[props.videoLoaded])
+    appendEvents(sounds[props.videoLoaded + " Automatic"])
   }
 
   const handleChange = (property, value, index) => {
