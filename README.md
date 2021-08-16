@@ -6,7 +6,7 @@ A prototype for the beyond captions project, in which we explore how to caption 
 
 ## To try the node
 
-Visit the [Beyond Captions Demo](https://git.corp.adobe.com/alonzofe/beyond-captions/blob/main/Screenshot.png) site.
+Visit the [Beyond Captions Demo](https://git.corp.adobe.com/pages/alonzofe/beyond-captions/) site.
 
 ## To install locally
 
