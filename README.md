@@ -4,7 +4,7 @@
 
 A prototype for the beyond captions project, in which we explore how to caption or visualize non-speech sounds.
 
-## To try the node
+## To try the live demo
 
 Visit the [Beyond Captions Demo](https://git.corp.adobe.com/pages/alonzofe/beyond-captions/) site.
 
