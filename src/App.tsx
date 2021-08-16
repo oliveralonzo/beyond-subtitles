@@ -60,7 +60,7 @@ export const App:FC = () => {
   const handleEventsChange = (events) => {
     setEvents(events)
     if (videoPlayer != null)
-      updateCurrEvents(videoPlayer.getCurrentTime(), videoPlaying, updatedEvents = events)
+      updateCurrEvents(videoPlayer.getCurrentTime(), videoPlaying, events)
   }
 
   const handleSeekVideo = (time) => {
