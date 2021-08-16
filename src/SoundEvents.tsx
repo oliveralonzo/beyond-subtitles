@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
-import { Container, Row, Col, InputGroup, Form, FormCheck, FormControl, Button, Accordion, Card, ToggleButton, CloseButton } from 'react-bootstrap'
+import { Container, Row, Col, InputGroup, Form, FormCheck, FormControl, Button, Accordion, Card, ToggleButton, CloseButton, Dropdown } from 'react-bootstrap'
 import { useAccordionButton } from 'react-bootstrap/AccordionButton';
 import Stars from 'react-stars'
 import axios from 'axios'
@@ -10,6 +10,73 @@ import Gallery from 'react-grid-gallery'
 import DownloadLink from "react-download-link"
 
 import { SearchBox } from './SearchBox'
+
+const TimeStamp = (props) => {
+  const convertTime = (time) => {
+    if (time != "") {
+      time = time.split(":").map((t) => {return parseInt(t)})
+      const time_object = {
+        hours: time[0],
+        minutes: time[1],
+        seconds: time[2]
+      }
+      return toMS(time_object)
+    } else {
+      return null
+    }
+  }
+
+  const formatMS = (milliseconds) => {
+    if (milliseconds != null) {
+      const time = parseMS(milliseconds)
+      var hours = time.hours
+      var minutes = time.minutes
+      var seconds = time.seconds
+
+      hours = (hours < 10) ? "0" + hours : hours
+      minutes = (minutes < 10) ? "0" + minutes : minutes
+      seconds = (seconds < 10) ? "0" + seconds : seconds
+
+      const formattedTime = hours + ":" + minutes + ":" + seconds
+
+      return formattedTime
+    } else {
+      console.log("going to return null")
+      return null
+    }
+  }
+
+  return (
+    <Form.Control
+      type="text"
+      maxLength="8"
+      autoComplete="off"
+      onInput={(e) => {
+        // This needs to be cleaned up to make sure that it is usable (e.g. right now replacing something in the middle removes the rest)
+        e.currentTarget.value = e.currentTarget.value.replace(/[^0-9:]/g, '').replace(/((:|^).?):/g, '$1]').replace(/([0-9][0-9])[0-9]/g, '$1')}}
+      placeholder="00:00:00"
+      name={props.name}
+      defaultValue={formatMS(props.time)}
+      onChange={(e) => {
+        // This needs to be cleaned up to make sure that the time is always in the right format
+        const curr = e.currentTarget
+        const time = curr.value
+        if (time.length == 8 || time.length == 00) {
+          props.onTimeChange(curr.name, convertTime(time))
+        }
+      }}
+      className="no-border"
+      />
+  )
+}
+
+const Star = (props) => {
+  if (props.filled) {
+    return <span className="star filled" onClick={props.onClick}> ★ </span>
+  } else {
+    return <span className="star" onClick={props.onClick}> ☆ </span>
+  }
+}
 
 const SoundEvent:FC = (props) => {
   const [enabled, setEnabled] = useState(true)
@@ -44,35 +111,6 @@ const SoundEvent:FC = (props) => {
     props.onValueChange(type, time, props.index)
   }
 
-  const convertTime = (time) => {
-    time = time.split(":").map((t) => {return parseInt(t)})
-    const time_object = {
-      hours: time[0],
-      minutes: time[1],
-      seconds: time[2]
-    }
-    return toMS(time_object)
-  }
-
-  const formatMS = (milliseconds) => {
-    if (milliseconds != null) {
-      const time = parseMS(milliseconds)
-      var hours = time.hours
-      var minutes = time.minutes
-      var seconds = time.seconds
-
-      hours = (hours < 10) ? "0" + hours : hours
-      minutes = (minutes < 10) ? "0" + minutes : minutes
-      seconds = (seconds < 10) ? "0" + seconds : seconds
-
-      const formattedTime = hours + ":" + minutes + ":" + seconds
-
-      return formattedTime
-    } else {
-      return null
-    }
-  }
-
   const removeVisual = (index) => {
     visuals.splice(index, 1)
     props.onValueChange("visuals", visuals, props.index)
@@ -82,40 +120,6 @@ const SoundEvent:FC = (props) => {
   const disableEvent = () => {
     setEnabled(false)
     props.onValueChange("disabled", true, props.index)
-  }
-
-  const TimeStamp = (props) => {
-    return (
-      <Form.Control
-        type="text"
-        maxLength="8"
-        autoComplete="off"
-        onInput={(e) => {
-          // This needs to be cleaned up to make sure that it is usable (e.g. right now replacing something in the middle removes the rest)
-          e.currentTarget.value = e.currentTarget.value.replace(/[^0-9:]/g, '').replace(/((:|^).?):/g, '$1]').replace(/([0-9][0-9])[0-9]/g, '$1')}}
-        placeholder="00:00:00"
-        name={props.name}
-        defaultValue={formatMS(props.time)}
-        onChange={(e) => {
-          // This needs to be cleaned up to make sure that the time is always in the right format
-          const curr = e.currentTarget
-          const time = curr.value
-          if (time.length == 8) {
-            handleTimeChange(curr.name, convertTime(time))
-          }
-        }}
-        onClick={(e)=>{e.stopPropagation()}}
-        className="no-border"
-        />
-    )
-  }
-
-  const Star = (props) => {
-    if (props.filled) {
-      return <span className="star filled" onClick={props.onClick}> ★ </span>
-    } else {
-      return <span className="star" onClick={props.onClick}> ☆ </span>
-    }
   }
 
   const RemoveVisualOverlay = () => {
@@ -129,7 +133,9 @@ const SoundEvent:FC = (props) => {
   if (enabled) {
     return (
         <>
-        <Accordion onClick={() => props.onClick(startTime)} className={`sound-event ${props.current ? "current" : ""}`}>
+        <Accordion onClick={() => {
+          props.onClick(startTime)
+        }} className={`sound-event ${props.current ? "current" : ""}`}>
           <Card>
             <Card.Body>
               <Container className="sound-event-card">
@@ -138,9 +144,9 @@ const SoundEvent:FC = (props) => {
                   <Col>
                     <Card.Title>
                       <Container className="timestamps flex">
-                        <TimeStamp time={startTime} name="startTime"/>
+                        <TimeStamp time={startTime} onClick={props.pauseVideo} onTimeChange={handleTimeChange} name="startTime"/>
                         <span> – </span>
-                        <TimeStamp time={endTime} name="endTime"/>
+                        <TimeStamp time={endTime} onClick={props.pauseVideo} onTimeChange={handleTimeChange} name="endTime"/>
                       </Container>
                     </Card.Title>
                   </Col>
@@ -199,7 +205,8 @@ export const SoundEvents:FC = (props) => {
     const events = props.events
     to_append = to_append.map((event, index) => {
       event.startTime = Math.floor(event.startTime/1000)*1000
-      event.endTime = Math.ceil(event.endTime/1000)*1000
+      if (event.endTime != null)
+        event.endTime = Math.ceil(event.endTime/1000)*1000
       event.important = false
       event.key = events.length + index
       return event
@@ -230,9 +237,13 @@ export const SoundEvents:FC = (props) => {
     }])
   }
 
-  const loadEvents = () => {
+  const loadEvents = (e) => {
     setAnalyzed(true)
-    appendEvents(sounds[props.videoLoaded + " Automatic"])
+    console.log(e.target.id)
+    var source = props.videoLoaded
+    if (e.target.id == "automatic")
+      source = source + " Automatic"
+    appendEvents(sounds[source])
   }
 
   const handleChange = (property, value, index) => {
@@ -254,17 +265,27 @@ export const SoundEvents:FC = (props) => {
   return (
     <>
       {props.events.map((event, index) => {
-        return <SoundEvent current={event.current} onClick={props.seekVideo} important={event.important} onValueChange={handleChange} startTime={event.startTime} endTime={event.endTime} label={event.label} index={index} key={event.key} automatic={event.automatic} automaticTags={event.tags} inputPlaceholder={props.inputPlaceholder} visuals={props.visuals}/>
+        return <SoundEvent current={event.current} onClick={props.seekVideo} important={event.important} pauseVideo={props.pauseVideo} onValueChange={handleChange} startTime={event.startTime} endTime={event.endTime} label={event.label} index={index} key={event.key} automatic={event.automatic} automaticTags={event.tags} inputPlaceholder={props.inputPlaceholder} visuals={props.visuals}/>
       })}
       <Container className="event-buttons flex">
-          <Button variant="primary" onClick={loadEvents} disabled={analyzed || !props.videoLoaded}> Auto-search Events </Button>
-          <Button variant="primary" onClick={appendEmptyEvent} disabled={!props.videoLoaded}> Add New Event </Button>
-          <DownloadLink
-            className={`btn btn-primary download-button ${!props.videoLoaded || props.events.length == 0 ? "disabled" : ""}`}
-            label="Export"
-            filename="Sound Events.json"
-            exportFile={exportEvents}
-          />
+        <Dropdown>
+          <Dropdown.Toggle disabled={analyzed || !props.videoLoaded} variant="primary" id="load-events" >
+            Auto-search Events
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item id="manual" onClick={loadEvents} href="#">Engine A</Dropdown.Item>
+            <Dropdown.Item id="automatic" onClick={loadEvents} href="#">Engine B</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+        {/*<Button variant="primary" onClick={loadEvents} disabled={analyzed || !props.videoLoaded}> Auto-search Events </Button>*/}
+        <Button variant="primary" onClick={appendEmptyEvent} disabled={!props.videoLoaded}> Add New Event </Button>
+        <DownloadLink
+          className={`btn btn-primary download-button ${!props.videoLoaded || props.events.length == 0 ? "disabled" : ""}`}
+          label="Export"
+          filename="Sound Events.json"
+          exportFile={exportEvents}
+        />
       </Container>
     </>
   )

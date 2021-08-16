@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { Container, Form, ButtonGroup, ToggleButton, DropdownButton, InputGroup, Dropdown, FormControl } from 'react-bootstrap'
+import { Container, Form, ButtonToolbar, ButtonGroup, ToggleButton, DropdownButton, InputGroup, Dropdown, FormControl } from 'react-bootstrap'
 import ReactPlayer from 'react-player'
 import Draggable from 'react-draggable'
 import {Resizable, HandleClassName} from 're-resizable'
@@ -81,8 +81,8 @@ const Visual:FC = (props) => {
 
 export const VideoPlayer:FC = (props) => {
   const [videoFilePath, setVideoFilePath] = useState(null)
-  const [show, setShow] = useState("descriptions")
-  const [playing, setPlaying] = useState(false)
+  const [preview, setPreview] = useState("descriptions")
+  const [importantOnly, setImportantOnly] = useState(false)
   const [currVideo, setCurrVideo] = useState(null)
 
   const videoFiles = ["YouTube", "BBC", "TikTok"]
@@ -100,34 +100,30 @@ export const VideoPlayer:FC = (props) => {
     setCurrVideo(video)
   }
 
-  const onPlayPause = () => {
-    setPlaying(!playing)
-    props.onPlayPause(!playing)
-  }
-
   return (
     <>
         <Container className="video-wrapper flex flex-centered">
           <Container className="video-overlay">
-            {show === "descriptions" &&
+            {preview === "descriptions" &&
               <Container className="descriptions flex flex-column">
                 {props.currEvents.map((event, index) => {
-                  console.log("current events updated")
-                  return  <div key={index} className="description"> [{event.label}] </div>
+                  if (!importantOnly || event.important)
+                    return  <div key={index} className="description"> [{event.label}] </div>
                 })}
               </Container>}
-            {show === "visuals" &&
+            {preview === "visuals" &&
               <Container className="visuals flex flex-column">
                 {props.currEvents.map((event, eventIndex) => {
                   if (event.visuals) {
                     return event.visuals.map((visual, visualIndex) => {
-                      return <Visual key={event.index + visualIndex} eventIndex={event.index} position={visual.position} rotation={visual.rotation} width={visual.width} onChange={props.onVisualsChange} index={visualIndex} visual={visual} videoPlaying={playing}/>
+                      if (!importantOnly || event.important)
+                        return <Visual key={event.index + visualIndex} eventIndex={event.index} position={visual.position} rotation={visual.rotation} width={visual.width} onChange={props.onVisualsChange} index={visualIndex} visual={visual} videoPlaying={props.playing}/>
                     })
                   }
                 })}
               </Container>}
           </Container>
-          {currVideo && <ReactPlayer ref={props.player} url={`static/videos/${currVideo}.mp4`} controls={true} width="100%" height="100%" onProgress={props.onProgress} onPlay={onPlayPause} onPause={onPlayPause}  />}
+          {currVideo && <ReactPlayer ref={props.player} url={`static/videos/${currVideo}.mp4`} playing={props.playing} controls={true} width="100%" height="100%" onProgress={props.onProgress} onPlay={props.onPlayPause} />}
         </Container>
         {/*<Form.Group className="mb-3">
           <Form.Control type="file" onChange={handleVideoUpload}/>
@@ -138,23 +134,41 @@ export const VideoPlayer:FC = (props) => {
             })}
           </DropdownButton>
           {/*<FormControl disabled value={currVideo} onChange={(e) => {return}} aria-label="Label for current video" />*/}
-        {currVideo != null && <Container className="flex flex-column flex-centered">
-        Preview
-        <ButtonGroup>
-          {["descriptions", "visuals", "off"].map((value, index) => {
-            return <ToggleButton
-              key={index}
-              id={`radio-${value}`}
-              type="radio"
-              variant="outline-primary"
-              name="radio"
-              value={value}
-              checked={show === value}
-              onChange={(e) => setShow(e.currentTarget.value)}>
-              {value.charAt(0).toUpperCase() + value.slice(1)}
-            </ToggleButton>
-          })}
-      </ButtonGroup>
+        {currVideo != null && <Container className="preview-toolbar flex flex-column flex-centered">
+            <h4> Preview </h4>
+            <ButtonToolbar className="justify-content-between">
+            <ButtonGroup>
+              {["descriptions", "visuals", "off"].map((value, index) => {
+                return <ToggleButton
+                  key={index}
+                  id={`preview-${value}`}
+                  type="radio"
+                  variant="outline-primary"
+                  name="preview"
+                  value={value}
+                  checked={preview === value}
+                  onChange={(e) => setPreview(e.currentTarget.value)}>
+                  {value.charAt(0).toUpperCase() + value.slice(1)}
+                </ToggleButton>
+              })}
+          </ButtonGroup>
+          <ButtonGroup>
+            {["all", "starred"].map((value, index) => {
+              return <ToggleButton
+                key={index}
+                id={`importantOnly-${value}`}
+                type="radio"
+                variant="outline-primary"
+                name="importantOnly"
+                value={value}
+                className={`${preview == "off" ? "disabled" : ""}`}
+                checked={value == "starred" ? importantOnly : !importantOnly}
+                onChange={(e) => setImportantOnly(value == "starred")}>
+                {value.charAt(0).toUpperCase() + value.slice(1)}
+              </ToggleButton>
+            })}
+        </ButtonGroup>
+        </ButtonToolbar>
       </Container>}
     </>
   )

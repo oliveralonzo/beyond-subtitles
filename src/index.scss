@@ -145,7 +145,7 @@
 
 .video-wrapper {
   position: relative;
-  max-height: 70vh;
+  max-height: 50vh;
 
   .video-overlay {
     position: absolute;
@@ -199,4 +199,8 @@
   color: #fff !important;
   margin: 0 !important;
   text-decoration: none !important;
+}
+
+.preview-toolbar > .btn-toolbar > div {
+  margin-right: 1rem;
 }

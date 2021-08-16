@@ -36,13 +36,13 @@ export const App:FC = () => {
   const handleVideoLoad = (loaded) => {
     setVideoLoaded(loaded)
   }
-  const handleVideoPlaying = (playing) => {
-    setVideoPlaying(playing)
-    updateCurrEvents(videoPlayer.getCurrentTime())
+  const handleVideoPlaying = () => {
+    setVideoPlaying(!videoPlaying)
+    updateCurrEvents(videoPlayer.getCurrentTime(), videoPlaying)
   }
 
   const handleVideoProgress = (time) => {
-    updateCurrEvents(time.playedSeconds)
+    updateCurrEvents(time.playedSeconds, videoPlaying)
     setCurrMilliseconds(time.playedSeconds*1000)
   }
 
@@ -51,7 +51,7 @@ export const App:FC = () => {
     events[index].visuals[visualIndex].rotation = rotation
     events[index].visuals[visualIndex].width = width
     setEvents([...events])
-    updateCurrEvents(videoPlayer.getCurrentTime())
+    updateCurrEvents(videoPlayer.getCurrentTime(), videoPlaying)
   }
   // ========================================
 
@@ -60,17 +60,21 @@ export const App:FC = () => {
   const handleEventsChange = (events) => {
     setEvents(events)
     if (videoPlayer != null)
-      updateCurrEvents(videoPlayer.getCurrentTime(), events)
+      updateCurrEvents(videoPlayer.getCurrentTime(), videoPlaying, updatedEvents = events)
   }
 
   const handleSeekVideo = (time) => {
+    console.log(time)
+    setVideoPlaying(false)
     videoPlayer.seekTo(time/1000)
-    updateCurrEvents(videoPlayer.getCurrentTime())
+    updateCurrEvents(videoPlayer.getCurrentTime(), false)
   }
+
   // ========================================
 
   // Helper function to update currEvents when pretty much anything changes
-  const updateCurrEvents = (playedSeconds, updatedEvents = events) => {
+  const updateCurrEvents = (playedSeconds, videoPlaying = false, updatedEvents = events) => {
+    console.log("updating current events ",videoPlaying)
     var currMilliseconds = Math.floor(playedSeconds)*1000
     var waitTime = 0
     if (videoPlaying) {
@@ -91,7 +95,7 @@ export const App:FC = () => {
   return <Container fluid>
     <Row>
       <Col id="video-player" className="flex flex-centered flex-column">
-          <VideoPlayer player={ref} onVisualsChange={handleVisualsUpdate} onVideoLoad={handleVideoLoad} onProgress={handleVideoProgress} currEvents={currEvents} onPlayPause={handleVideoPlaying}/>
+          <VideoPlayer player={ref} onVisualsChange={handleVisualsUpdate} playing={videoPlaying} onVideoLoad={handleVideoLoad} onProgress={handleVideoProgress} currEvents={currEvents} onPlayPause={handleVideoPlaying}/>
       </Col>
       <Col id="sound-events">
         <Container>
