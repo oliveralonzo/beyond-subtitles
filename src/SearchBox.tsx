@@ -71,13 +71,12 @@ export const SearchBox:FC = (props) => {
   }
 
   const search = (e) => {
-    const curr_tabs = tabs
     var curr_tab = activeTab
     if (typeof e == "string") {
       curr_tab = e
       setActiveTab(curr_tab)
     } else {
-      current_tabs = tabs.map((tab) => {
+      const current_tabs = tabs.map((tab) => {
         tab.searched = false
         if (tab.search_for == "Emojis" && query != "")
           tab.query = query + " " + "emojis"
@@ -87,7 +86,7 @@ export const SearchBox:FC = (props) => {
       })
       setTabs(current_tabs)
     }
-    if (!curr_tabs[curr_tab].searched) {
+    if (!tabs[curr_tab].searched) {
       searchGiphy(curr_tab)
     }
   }
