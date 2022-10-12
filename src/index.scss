@@ -1,0 +1,206 @@
+@import "bootstrap/scss/bootstrap";
+@import "react-rotatable/src/styles/rotatable";
+
+#video-player, #sound-events {
+  height: 100vh;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+#video-player > div {
+  margin-top: 1rem;
+}
+
+.search-box {
+  @media (min-width: 576px) {
+      .modal-dialog {
+      max-width: 50%;
+    }
+  }
+
+  .modal-body {
+    max-height: 75vh;
+    overflow-y: auto;
+  }
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-centered {
+  justify-content: center;
+  align-items: center;
+}
+
+.result-list, .results-tabs-nav {
+  max-width: 100%;
+  padding-top: 1em;
+}
+
+.no-border {
+  border: 0;
+  padding: 0;
+
+  &:focus {
+    box-shadow: none !important;
+  }
+}
+
+.clickable {
+  :hover {
+    cursor: pointer;
+  }
+}
+
+.star {
+  font-size: 1.25em;
+
+  &:hover {
+    opacity: 0.5;
+  }
+
+  &.filled {
+    color: #ffe749;
+  }
+}
+
+.timestamps {
+  padding: 0;
+  justify-content: flex-start;
+
+  input {
+    width: 4.5rem;
+  }
+
+  span {
+    padding-right: .25rem;
+  }
+}
+
+.right-align {
+  text-align: right;
+}
+
+.card-toggle {
+  padding: 0 !important;
+}
+
+.event-buttons {
+  width: auto;
+  padding: 1rem;
+
+  button {
+    margin-right: 1rem;
+  }
+}
+
+.sound-event {
+  margin-top: 1em;
+  position: relative;
+
+  &:hover {
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    cursor: pointer;
+  }
+
+  &.current .card{
+    box-shadow: 0 3px 10px rgba(#3dff73, 0.27);
+    border-color: #3dff73;
+  }
+
+  .sound-event-card {
+    .sound-event-visuals {
+      padding-top: .5em;
+
+      button, .ReactGridGallery {
+        width: auto;
+      }
+    }
+
+    .dismiss-sound-btn {
+      position: absolute;
+      top: .25rem;
+      right: .25rem;
+    }
+  }
+}
+
+.visuals-remove {
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  opacity: 70%;
+  justify-content: center;
+  align-items: center;
+
+  .btn-close {
+    font-size: 1.5rem;
+  }
+}
+
+.video-wrapper {
+  position: relative;
+  max-height: 50vh;
+
+  .video-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+
+    .descriptions, .visuals {
+      position: absolute;
+      height: 90%;
+      left: 0;
+      right: 0;
+      justify-content: flex-end;
+      align-items: center;
+
+      .description, .visual-wrapper {
+        z-index: 99;
+      }
+
+      .description {
+        color: #ffffff;
+        background-color: rgba(0, 0, 0, 0.8);
+        padding: .1rem .5rem;
+        font-size: 1rem;
+        margin-bottom: .25rem;
+      }
+
+      .visual {
+        width: 100%;
+        height: 100%;
+        background-size: contain;
+        background-repeat: no-repeat;
+      }
+
+      div {
+        pointer-events: auto;
+      }
+
+    }
+  }
+}
+
+.draggable {
+  cursor: move;
+  border: 1px solid #000000;
+}
+
+.download-button {
+  color: #fff !important;
+  margin: 0 !important;
+  text-decoration: none !important;
+}
+
+.preview-toolbar > .btn-toolbar > div {
+  margin-right: 1rem;
+}
